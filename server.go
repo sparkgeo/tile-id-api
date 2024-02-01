@@ -1,19 +1,47 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
 	"regexp"
+	"slices"
 	"strconv"
 
+	"github.com/captaincoordinates/tile-id-api/handler"
+	"github.com/captaincoordinates/tile-id-api/handler/quadkey"
+	"github.com/captaincoordinates/tile-id-api/handler/tms"
+	"github.com/captaincoordinates/tile-id-api/handler/zxy"
+	"github.com/captaincoordinates/tile-id-api/params"
 	"github.com/gorilla/mux"
 )
 
 func main() {
+	handlers := []handler.TileHandler{
+		tms.TmsTileHandler{},
+		zxy.ZxyTileHandler{},
+		quadkey.QuadkeyTileHandler{},
+	}
+	allIdentifiers := make([]string, len(handlers))
+	for i, eachHandler := range handlers {
+		allIdentifiers[i] = eachHandler.Identifier()
+	}
 	router := mux.NewRouter()
-	router.HandleFunc("/zxy/{z}/{x}/{y}", tileZXYHandler)
+	for _, eachHandler := range handlers {
+		router.HandleFunc(
+			fmt.Sprintf(
+				"/%s/%s{extension:(?:\\.(?:jpg|jpeg|png))?}",
+				eachHandler.Identifier(),
+				eachHandler.PathPattern(),
+			),
+			createHandlerClosure(eachHandler, allIdentifiers),
+		)
+	}
+	// response headers could also include bbox, centroid in LL84, maybe UTM zone if applicable
+	// write some unit tests
+	// README with installation instructions
+	// demo and discuss hosting
+	// proper logging with debug, warn, info etc?
 	listenPort := getListenPort()
 	fmt.Println(fmt.Sprintf("Listening on port %d", listenPort))
 	listenAddress := fmt.Sprintf(":%d", listenPort)
@@ -23,54 +51,67 @@ func main() {
 	}
 }
 
-func tileZXYHandler(writer http.ResponseWriter, request *http.Request) {
-	values, err := fetchIntPathParams(writer, request, "z", "x", "y")
-	if err != nil {
-		return
+func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []string) func(http.ResponseWriter, *http.Request) {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		encoder, supportsOpacity := handler.GetEncoder(request)
+		var opacity uint8 = 255
+		if supportsOpacity {
+			opacity = params.Opacity(request)
+		}
+		writer.Header().Set("X-tile-opacity", fmt.Sprintf("%d/255", opacity))
+		tileKeyProvider, err := thisHandler.GetKeyProvider(request)
+		if err != handler.NoReturnableError {
+			http.Error(
+				writer,
+				err.ErrorMessage,
+				err.StatusCode,
+			)
+			return
+		}
+		tileKeys := make([]string, len(allIdentifiers))
+		for i, identifier := range sortIdentifiers(allIdentifiers, thisHandler.Identifier()) {
+			tileKey := tileKeyProvider(identifier)
+			writer.Header().Set(fmt.Sprintf("X-tile-id-%s", identifier), tileKey)
+			tileKeys[i] = fmt.Sprintf("%s: %s", identifier, tileKey)
+		}
+		img := handler.GenerateTile(
+			opacity,
+			tileKeys...,
+		)
+		encodeErr := encoder(writer, img)
+		if encodeErr != nil {
+			http.Error(
+				writer,
+				fmt.Sprintf("Unable to encode image: %v", encodeErr),
+				http.StatusInternalServerError,
+			)
+			return
+		}
 	}
-	z, x, y := values[0], values[1], values[2]
-	writer.WriteHeader(http.StatusOK)
-	fmt.Fprintf(writer, "Requested z: %d, x: %d, y: %d", z, x, y)
 }
 
-func fetchIntPathParams(
-	writer http.ResponseWriter,
-	request *http.Request,
-	paramNames ...string,
-) ([]int, error) {
-	vars := mux.Vars(request)
-	parsedInts := make([]int, len(paramNames))
-	for i, paramName := range paramNames {
-		paramStr, ok := vars[paramName]
-		if !ok {
-			http.Error(
-				writer,
-				fmt.Sprintf("Missing expected parameter %s", paramName),
-				http.StatusBadRequest,
-			)
-			return make([]int, 0), errors.New("Missing parameter(s)")
+func sortIdentifiers(allIdentifiers []string, firstValue string) []string {
+	ownAllIdentifiers := allIdentifiers[:]
+	slices.Sort(ownAllIdentifiers)
+	split := -1
+	for i, identifier := range ownAllIdentifiers {
+		if identifier == firstValue {
+			split = i
 		}
-		paramInt, err := strconv.ParseInt(paramStr, 10, 64)
-		if err != nil {
-			http.Error(
-				writer,
-				fmt.Sprintf("Parameter %s cannot be parsed to int (value %s)", paramName, paramStr),
-				http.StatusBadRequest,
-			)
-			return make([]int, 0), errors.New("Parameter parse error")
-		}
-		parsedInts[i] = int(paramInt)
 	}
-	return parsedInts, nil
+	if split == -1 {
+		return ownAllIdentifiers
+	}
+	if split == 0 {
+		return ownAllIdentifiers
+	}
+	return append(append(append([]string{}, firstValue), ownAllIdentifiers[0:split]...), ownAllIdentifiers[split+1:]...)
 }
 
 func getListenPort() uint {
 	const defaultPort uint = 8080
 	configuredPortStr := os.Getenv("TILE_ID_LISTEN_PORT")
-	portRegex, err := regexp.Compile("^\\d{4,5}$")
-	if err != nil {
-		panic(err)
-	}
+	portRegex := regexp.MustCompile("^\\d{4,5}$")
 	logFail := func() {
 		fmt.Println(fmt.Sprintf("Unable to parse configured port '%s', returning default %d", configuredPortStr, defaultPort))
 	}

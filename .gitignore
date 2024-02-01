@@ -1,8 +1,12 @@
 # IDE
 .vscode
+__debug_bin*
 
 # Binary
 tile-id-api
 
 # Env
 .autoenv*.zsh
+
+# Local
+**/.DS_Store
