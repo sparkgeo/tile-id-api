@@ -1,6 +1,7 @@
 package quadkey
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -42,4 +43,13 @@ func (self QuadkeyTileHandler) GetKeyProvider(request *http.Request) (handler.Ti
 			panic(fmt.Sprintf("Unknown identifier %s", identifier))
 		}
 	}, handler.NoReturnableError
+}
+
+func (self QuadkeyTileHandler) AsZXY(request *http.Request) ([3]int, error) {
+	quadkey := mux.Vars(request)["quadkey"]
+	zxy, err := common.QuadkeyToZxy(quadkey)
+	if err != nil {
+		return [3]int{}, errors.New(err.Error())
+	}
+	return [3]int{zxy[0], zxy[1], zxy[2]}, nil
 }

@@ -1,6 +1,7 @@
 package zxy
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -39,4 +40,12 @@ func (self ZxyTileHandler) GetKeyProvider(request *http.Request) (handler.TileHa
 			panic(fmt.Sprintf("Unknown identifier %s", identifier))
 		}
 	}, handler.NoReturnableError
+}
+
+func (self ZxyTileHandler) AsZXY(request *http.Request) ([3]int, error) {
+	params, err := params.FetchIntPathParams(request, "z", "x", "y")
+	if err != handler.NoReturnableError {
+		return [3]int{}, errors.New(err.ErrorMessage)
+	}
+	return [3]int{params[0], params[1], params[2]}, nil
 }

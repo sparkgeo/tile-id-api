@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strconv"
 
+	"github.com/captaincoordinates/tile-id-api/geo"
 	"github.com/captaincoordinates/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/handler/quadkey"
 	"github.com/captaincoordinates/tile-id-api/handler/tms"
@@ -37,7 +38,6 @@ func main() {
 			createHandlerClosure(eachHandler, allIdentifiers),
 		)
 	}
-	// response headers could also include bbox, centroid in LL84, maybe UTM zone if applicable
 	// write some unit tests
 	// README with installation instructions
 	// demo and discuss hosting
@@ -59,12 +59,12 @@ func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []stri
 			opacity = params.Opacity(request)
 		}
 		writer.Header().Set("X-tile-opacity", fmt.Sprintf("%d/255", opacity))
-		tileKeyProvider, err := thisHandler.GetKeyProvider(request)
-		if err != handler.NoReturnableError {
+		tileKeyProvider, keyProviderErr := thisHandler.GetKeyProvider(request)
+		if keyProviderErr != handler.NoReturnableError {
 			http.Error(
 				writer,
-				err.ErrorMessage,
-				err.StatusCode,
+				keyProviderErr.ErrorMessage,
+				keyProviderErr.StatusCode,
 			)
 			return
 		}
@@ -73,6 +73,12 @@ func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []stri
 			tileKey := tileKeyProvider(identifier)
 			writer.Header().Set(fmt.Sprintf("X-tile-id-%s", identifier), tileKey)
 			tileKeys[i] = fmt.Sprintf("%s: %s", identifier, tileKey)
+		}
+		tileZxy, zxyError := thisHandler.AsZXY(request)
+		if zxyError != nil {
+			fmt.Println(zxyError.Error())
+		} else {
+			writer.Header().Set("X-tile-bounds-ll84", geo.GetTileBounds(tileZxy[0], tileZxy[1], tileZxy[2]).ToString())
 		}
 		img := handler.GenerateTile(
 			opacity,

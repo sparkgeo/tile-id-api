@@ -8,6 +8,7 @@ type TileHandler interface {
 	Identifier() string
 	PathPattern() string
 	GetKeyProvider(request *http.Request) (TileHandlerKeyProvider, ReturnableError)
+	AsZXY(request *http.Request) ([3]int, error)
 }
 
 type TileHandlerKeyProvider func(
