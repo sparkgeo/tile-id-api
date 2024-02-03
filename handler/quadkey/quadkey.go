@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/captaincoordinates/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/handler/common"
 )
@@ -14,7 +15,7 @@ import (
 type QuadkeyTileHandler struct{}
 
 func (self QuadkeyTileHandler) Identifier() string {
-	return common.QuadkeyIdentifier
+	return constants.QuadkeyIdentifier
 }
 
 func (self QuadkeyTileHandler) PathPattern() string {
@@ -33,11 +34,11 @@ func (self QuadkeyTileHandler) GetKeyProvider(request *http.Request) (handler.Ti
 		}
 		z, x, y := zxy[0], zxy[1], zxy[2]
 		switch identifier {
-		case common.QuadkeyIdentifier:
+		case constants.QuadkeyIdentifier:
 			return quadkey
-		case common.ZxyIdentifier:
+		case constants.ZxyIdentifier:
 			return fmt.Sprintf("%d/%d/%d", z, x, y)
-		case common.TmsIdentifier:
+		case constants.TmsIdentifier:
 			return fmt.Sprintf("%d/%d/%d", z, x, common.FlipY(z, y))
 		default:
 			panic(fmt.Sprintf("Unknown identifier %s", identifier))

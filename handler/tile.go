@@ -10,29 +10,27 @@ import (
 	"net/http"
 	"regexp"
 
+	"github.com/captaincoordinates/tile-id-api/constants"
 	"github.com/gorilla/mux"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/math/fixed"
 )
 
-const TILE_WIDTH int = 256
-const TILE_HEIGHT int = 256
-
 func GenerateTile(opacity uint8, labels ...string) image.Image {
 	upLeft := image.Point{0, 0}
-	lowRight := image.Point{TILE_WIDTH, TILE_HEIGHT}
+	lowRight := image.Point{constants.TileWidth, constants.TileHeight}
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 	fill := color.NRGBA{255, 255, 255, opacity}
 	draw.Draw(img, img.Bounds(), &image.Uniform{fill}, image.Point{}, draw.Src)
 	border := color.RGBA{0, 0, 0, 255}
-	for x := 0; x < TILE_WIDTH; x++ {
+	for x := 0; x < constants.TileWidth; x++ {
 		img.Set(x, 0, border)
-		img.Set(x, TILE_HEIGHT-1, border)
+		img.Set(x, constants.TileHeight-1, border)
 	}
-	for y := 0; y < TILE_HEIGHT; y++ {
+	for y := 0; y < constants.TileHeight; y++ {
 		img.Set(0, y, border)
-		img.Set(TILE_WIDTH-1, y, border)
+		img.Set(constants.TileWidth-1, y, border)
 	}
 	for i, label := range labels {
 		col := color.Black

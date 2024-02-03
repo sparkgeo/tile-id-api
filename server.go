@@ -8,6 +8,7 @@ import (
 	"slices"
 	"strconv"
 
+	"github.com/captaincoordinates/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/geo"
 	"github.com/captaincoordinates/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/handler/quadkey"
@@ -115,21 +116,24 @@ func sortIdentifiers(allIdentifiers []string, firstValue string) []string {
 }
 
 func getListenPort() uint {
-	const defaultPort uint = 8080
 	configuredPortStr := os.Getenv("TILE_ID_LISTEN_PORT")
 	portRegex := regexp.MustCompile("^\\d{4,5}$")
 	logFail := func() {
-		fmt.Println(fmt.Sprintf("Unable to parse configured port '%s', returning default %d", configuredPortStr, defaultPort))
+		fmt.Println(fmt.Sprintf(
+			"Unable to parse configured port '%s', returning default %d",
+			configuredPortStr,
+			constants.DefaultPort,
+		))
 	}
 	if portRegex.MatchString(configuredPortStr) {
 		parsedPort, err := strconv.ParseUint(configuredPortStr, 10, 64)
 		if err != nil {
 			logFail()
-			return defaultPort
+			return constants.DefaultPort
 		}
 		return uint(parsedPort)
 	} else {
 		logFail()
-		return defaultPort
+		return constants.DefaultPort
 	}
 }

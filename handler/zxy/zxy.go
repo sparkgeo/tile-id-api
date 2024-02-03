@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/captaincoordinates/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/handler/common"
 	"github.com/captaincoordinates/tile-id-api/params"
@@ -13,7 +14,7 @@ import (
 type ZxyTileHandler struct{}
 
 func (self ZxyTileHandler) Identifier() string {
-	return common.ZxyIdentifier
+	return constants.ZxyIdentifier
 }
 
 func (self ZxyTileHandler) PathPattern() string {
@@ -30,11 +31,11 @@ func (self ZxyTileHandler) GetKeyProvider(request *http.Request) (handler.TileHa
 		identifier string,
 	) (key string) {
 		switch identifier {
-		case common.ZxyIdentifier:
+		case constants.ZxyIdentifier:
 			return fmt.Sprintf("%d/%d/%d", z, x, y)
-		case common.TmsIdentifier:
+		case constants.TmsIdentifier:
 			return fmt.Sprintf("%d/%d/%d", z, x, common.FlipY(z, y))
-		case common.QuadkeyIdentifier:
+		case constants.QuadkeyIdentifier:
 			return common.ZxyToQuadkey(z, x, y)
 		default:
 			panic(fmt.Sprintf("Unknown identifier %s", identifier))
