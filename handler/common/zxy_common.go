@@ -9,9 +9,13 @@ import (
 
 const ZxyPathPattern string = "{z:[0-9]|1[0-9]|2[0-5]}/{x:[0-9]{1,8}}/{y:[0-9]{1,8}}"
 
+type FlipYProvider = func(z, y int) int
+
 func FlipY(z, y int) int {
 	return int(math.Pow(2, float64(z))) - y - 1
 }
+
+type ZxyToQuadkeyProvider = func(z, x, y int) string
 
 func ZxyToQuadkey(z, x, y int) string {
 	quadkeyParts := []string{}
@@ -28,6 +32,8 @@ func ZxyToQuadkey(z, x, y int) string {
 	}
 	return strings.Join(quadkeyParts, "")
 }
+
+type QuadkeyToZxyProvider = func(quadkey string) ([]int, error)
 
 func QuadkeyToZxy(quadkey string) ([]int, error) {
 	zxy := []int{len(quadkey), 0, 0}

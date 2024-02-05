@@ -3,14 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"regexp"
 	"slices"
-	"strconv"
 
-	"github.com/captaincoordinates/tile-id-api/constants"
+	"github.com/captaincoordinates/tile-id-api/config"
 	"github.com/captaincoordinates/tile-id-api/geo"
 	"github.com/captaincoordinates/tile-id-api/handler"
+
 	"github.com/captaincoordinates/tile-id-api/handler/quadkey"
 	"github.com/captaincoordinates/tile-id-api/handler/tms"
 	"github.com/captaincoordinates/tile-id-api/handler/zxy"
@@ -18,11 +16,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var tileUtil handler.TileUtil = handler.NewTileUtil()
+var configUtil config.ConfigUtil = config.NewConfigUtil()
+var paramsUtil params.ParamsUtil = params.NewParamsUtil()
+
 func main() {
 	handlers := []handler.TileHandler{
-		tms.TmsTileHandler{},
-		zxy.ZxyTileHandler{},
-		quadkey.QuadkeyTileHandler{},
+		tms.NewTmsTileHandler(),
+		zxy.NewZxyTileHandler(),
+		quadkey.NewQuadkeyTileHandler(),
 	}
 	allIdentifiers := make([]string, len(handlers))
 	for i, eachHandler := range handlers {
@@ -39,11 +41,7 @@ func main() {
 			createHandlerClosure(eachHandler, allIdentifiers),
 		)
 	}
-	// write some unit tests
-	// README with installation instructions
-	// demo and discuss hosting
-	// proper logging with debug, warn, info etc?
-	listenPort := getListenPort()
+	listenPort := configUtil.GetListenPort()
 	fmt.Println(fmt.Sprintf("Listening on port %d", listenPort))
 	listenAddress := fmt.Sprintf(":%d", listenPort)
 	err := http.ListenAndServe(listenAddress, router)
@@ -54,24 +52,32 @@ func main() {
 
 func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []string) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		encoder, supportsOpacity := handler.GetEncoder(request)
+		encoder, supportsOpacity := tileUtil.GetEncoder(request)
 		var opacity uint8 = 255
 		if supportsOpacity {
-			opacity = params.Opacity(request)
+			opacity = paramsUtil.Opacity(request)
 		}
 		writer.Header().Set("X-tile-opacity", fmt.Sprintf("%d/255", opacity))
-		tileKeyProvider, keyProviderErr := thisHandler.GetKeyProvider(request)
-		if keyProviderErr != handler.NoReturnableError {
+		tileKeysByIdentifier, tileKeysErr := thisHandler.Keys(request)
+		if tileKeysErr != handler.NoReturnableError {
 			http.Error(
 				writer,
-				keyProviderErr.ErrorMessage,
-				keyProviderErr.StatusCode,
+				tileKeysErr.ErrorMessage,
+				tileKeysErr.StatusCode,
 			)
 			return
 		}
 		tileKeys := make([]string, len(allIdentifiers))
 		for i, identifier := range sortIdentifiers(allIdentifiers, thisHandler.Identifier()) {
-			tileKey := tileKeyProvider(identifier)
+			tileKey, keyExists := tileKeysByIdentifier[identifier]
+			if !keyExists {
+				fmt.Println(fmt.Sprintf(
+					"'%s' handler does not support identifier '%s'",
+					thisHandler.Identifier(),
+					identifier,
+				))
+				continue
+			}
 			writer.Header().Set(fmt.Sprintf("X-tile-id-%s", identifier), tileKey)
 			tileKeys[i] = fmt.Sprintf("%s: %s", identifier, tileKey)
 		}
@@ -81,7 +87,7 @@ func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []stri
 		} else {
 			writer.Header().Set("X-tile-bounds-ll84", geo.GetTileBounds(tileZxy[0], tileZxy[1], tileZxy[2]).ToString())
 		}
-		img := handler.GenerateTile(
+		img := tileUtil.GenerateTile(
 			opacity,
 			tileKeys...,
 		)
@@ -113,27 +119,4 @@ func sortIdentifiers(allIdentifiers []string, firstValue string) []string {
 		return ownAllIdentifiers
 	}
 	return append(append(append([]string{}, firstValue), ownAllIdentifiers[0:split]...), ownAllIdentifiers[split+1:]...)
-}
-
-func getListenPort() uint {
-	configuredPortStr := os.Getenv("TILE_ID_LISTEN_PORT")
-	portRegex := regexp.MustCompile("^\\d{4,5}$")
-	logFail := func() {
-		fmt.Println(fmt.Sprintf(
-			"Unable to parse configured port '%s', returning default %d",
-			configuredPortStr,
-			constants.DefaultPort,
-		))
-	}
-	if portRegex.MatchString(configuredPortStr) {
-		parsedPort, err := strconv.ParseUint(configuredPortStr, 10, 64)
-		if err != nil {
-			logFail()
-			return constants.DefaultPort
-		}
-		return uint(parsedPort)
-	} else {
-		logFail()
-		return constants.DefaultPort
-	}
 }

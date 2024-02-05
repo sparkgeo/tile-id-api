@@ -7,13 +7,16 @@ import (
 type TileHandler interface {
 	Identifier() string
 	PathPattern() string
-	GetKeyProvider(request *http.Request) (TileHandlerKeyProvider, ReturnableError)
+	Keys(request *http.Request) (map[string]string, ReturnableError)
 	AsZXY(request *http.Request) ([3]int, error)
 }
 
-type TileHandlerKeyProvider func(
-	identifier string,
-) (key string)
+func NewReturnableError(statusCode int, errorMessage string) ReturnableError {
+	return ReturnableError{
+		StatusCode:   statusCode,
+		ErrorMessage: errorMessage,
+	}
+}
 
 type ReturnableError struct {
 	StatusCode   int

@@ -12,6 +12,17 @@ type TileBounds struct {
 	MaxLat float64 `json:"urY"`
 }
 
+func NewTileBounds(
+	minLon, minLat, maxLon, maxLat float64,
+) TileBounds {
+	return TileBounds{
+		MinLon: minLon,
+		MinLat: minLat,
+		MaxLon: maxLon,
+		MaxLat: maxLat,
+	}
+}
+
 func (self TileBounds) ToString() string {
 	bytes, err := json.Marshal(self)
 	if err != nil {
@@ -23,12 +34,12 @@ func (self TileBounds) ToString() string {
 func GetTileBounds(z int, x int, y int) TileBounds {
 	minLat, maxLat := yToLatEdges(y, z)
 	minLon, maxLon := xToLonEdges(x, z)
-	return TileBounds{
-		MinLon: minLon,
-		MinLat: minLat,
-		MaxLon: maxLon,
-		MaxLat: maxLat,
-	}
+	return NewTileBounds(
+		minLon,
+		minLat,
+		maxLon,
+		maxLat,
+	)
 }
 
 func mercatorYToLat(mercatorY float64) float64 {

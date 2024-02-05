@@ -17,7 +17,17 @@ import (
 	"golang.org/x/image/math/fixed"
 )
 
-func GenerateTile(opacity uint8, labels ...string) image.Image {
+type TileUtil struct {
+	pathParamsMapProvider func(*http.Request) map[string]string
+}
+
+func NewTileUtil() TileUtil {
+	return TileUtil{
+		pathParamsMapProvider: mux.Vars,
+	}
+}
+
+func (self TileUtil) GenerateTile(opacity uint8, labels ...string) image.Image {
 	upLeft := image.Point{0, 0}
 	lowRight := image.Point{constants.TileWidth, constants.TileHeight}
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
@@ -47,9 +57,9 @@ func GenerateTile(opacity uint8, labels ...string) image.Image {
 	return img
 }
 
-func GetEncoder(request *http.Request) (encoder func(io.Writer, image.Image) error, supportsOpacity bool) {
+func (self TileUtil) GetEncoder(request *http.Request) (encoder func(io.Writer, image.Image) error, supportsOpacity bool) {
 	extension := regexp.MustCompile("^\\.").ReplaceAllString(
-		mux.Vars(request)["extension"],
+		self.pathParamsMapProvider(request)["extension"],
 		"",
 	)
 	switch extension {
