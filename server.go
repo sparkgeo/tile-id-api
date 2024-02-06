@@ -42,7 +42,7 @@ func main() {
 		)
 	}
 	listenPort := configUtil.GetListenPort()
-	fmt.Println(fmt.Sprintf("Listening on port %d", listenPort))
+	fmt.Println(fmt.Sprintf("Server port %d", listenPort))
 	listenAddress := fmt.Sprintf(":%d", listenPort)
 	err := http.ListenAndServe(listenAddress, router)
 	if err != nil {

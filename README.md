@@ -42,5 +42,12 @@ Only integer opacity values between 0 and 100 are permitted. Non-permitted value
 
 By default the API binds to port 8080. This can be changed by setting an environment variable `TILE_ID_LISTEN_PORT` to a suitable port:
 ```
-go build && TILE_ID_LISTEN_PORT=8129 ./tile-id-api
+go build && TILE_ID_LISTEN_PORT=8123 ./tile-id-api
+```
+
+## Docker
+
+The API can be run in a container and by default the container will bind to local port `8123`. This can be changed by setting an environment variable `TILE_ID_LISTEN_PORT` to a suitable port:
+```
+TILE_ID_LISTEN_PORT=8999 scripts/run-in-container.sh
 ```
