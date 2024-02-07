@@ -1,0 +1,23 @@
+services:
+  api:
+    image: captaincoordinates/tile-id-api
+    build:
+      dockerfile: dockerfile.api
+    ports:
+      - ${TILE_ID_LISTEN_PORT:-8123}:80
+    volumes:
+      - .:/src:ro
+  unittest:
+    build:
+      dockerfile: dockerfile.unittest
+    volumes:
+      - .:/src:ro
+    profiles:
+      - unittest
+  integrationtest:
+    build:
+      dockerfile: dockerfile.integrationtest
+    volumes:
+      - ./scripts/docker:/tests:ro
+    depends_on:
+      - api

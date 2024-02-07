@@ -23,8 +23,8 @@ func NewConfigUtil() ConfigUtil {
 }
 
 func (self ConfigUtil) GetListenPort() uint {
-	configuredPortStr := self.envGetter("TILE_ID_LISTEN_PORT")
-	portRegex := regexp.MustCompile("^\\d{4,5}$")
+	configuredPortStr := self.envGetter("TILE_ID_SERVER_PORT")
+	portRegex := regexp.MustCompile("^\\d{2,5}$")
 	logFail := func() {
 		log.Debug(fmt.Sprintf(
 			"Unable to parse configured port '%s', returning default %d",

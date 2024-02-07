@@ -1,0 +1,10 @@
+FROM golang:1.21.6-alpine3.19
+
+WORKDIR /src
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY . .
+CMD ["go", "test", "./...", "-v"]

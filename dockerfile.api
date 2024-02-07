@@ -13,5 +13,9 @@ RUN go build
 FROM alpine:3.19 
 
 COPY --from=builder /src/tile-id-api /
-EXPOSE 8080
+
+ARG SERVER_PORT=80
+ENV TILE_ID_SERVER_PORT=${SERVER_PORT}
+EXPOSE ${SERVER_PORT}
+
 CMD ["/tile-id-api"]

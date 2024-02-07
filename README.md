@@ -40,14 +40,31 @@ Only integer opacity values between 0 and 100 are permitted. Non-permitted value
 
 ## Host Port
 
-By default the API binds to port 8080. This can be changed by setting an environment variable `TILE_ID_LISTEN_PORT` to a suitable port:
-```
-go build && TILE_ID_LISTEN_PORT=8123 ./tile-id-api
+By default the API binds to port 8080. This can be changed by setting an environment variable `TILE_ID_SERVER_PORT` to a suitable port:
+```sh
+go build && TILE_ID_SERVER_PORT=8123 ./tile-id-api
 ```
 
 ## Docker
 
 The API can be run in a container and by default the container will bind to local port `8123`. This can be changed by setting an environment variable `TILE_ID_LISTEN_PORT` to a suitable port:
-```
+```sh
 TILE_ID_LISTEN_PORT=8999 scripts/run-in-container.sh
+```
+
+## Tests
+
+Unit tests can be executed locally:
+```sh
+go test ./... -v
+```
+
+Other tests require a container to execute. The following scripts all execute in containers:
+```sh
+scripts/run-validate-openapi-in-container.sh    # validate the OpenAPI specification
+scripts/run-unit-tests-in-container.sh  # execute all unit tests
+scripts/run-integration-tests-in-container.sh # execute all integration tests
+
+# this script is executed in CI
+scripts/run-tests-in-container.sh   # validate OpenAPI spec, execute unit tests, execute integration tests
 ```

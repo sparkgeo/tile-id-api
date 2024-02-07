@@ -1,0 +1,9 @@
+FROM python:3.12-alpine3.19
+
+WORKDIR /tests
+
+COPY scripts/docker/requirements.txt .
+RUN pip install -r ./requirements.txt
+
+COPY scripts/docker/validate_http_requests.py .
+CMD ["python", "validate_http_requests.py"]

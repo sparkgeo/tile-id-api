@@ -2,12 +2,8 @@
 
 set -e
 
-image_name="captaincoordinates/tile-id-api"
 local_port=${TILE_ID_LISTEN_PORT:-8123}
+echo "Will listen on http://localhost:$local_port"
 
-docker build -t $image_name .
-echo "Listening on local port $local_port"
-docker run \
-    --rm \
-    -p $local_port:8080 \
-    $image_name
+docker compose build api
+TILE_ID_LISTEN_PORT=$local_port docker compose up api
