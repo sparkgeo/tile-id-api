@@ -7,7 +7,10 @@ import (
 	"strconv"
 
 	"github.com/captaincoordinates/tile-id-api/constants"
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 type ConfigUtil struct {
 	envGetter func(string) string
@@ -23,7 +26,7 @@ func (self ConfigUtil) GetListenPort() uint {
 	configuredPortStr := self.envGetter("TILE_ID_LISTEN_PORT")
 	portRegex := regexp.MustCompile("^\\d{4,5}$")
 	logFail := func() {
-		fmt.Println(fmt.Sprintf(
+		log.Debug(fmt.Sprintf(
 			"Unable to parse configured port '%s', returning default %d",
 			configuredPortStr,
 			constants.DefaultPort,

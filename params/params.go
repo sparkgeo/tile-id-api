@@ -11,7 +11,10 @@ import (
 	"github.com/captaincoordinates/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/handler"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 type IntPathParamsProvider = func(request *http.Request, paramNames ...string) ([]int, handler.ReturnableError)
 
@@ -71,7 +74,7 @@ func (self ParamsUtil) Opacity(request *http.Request) uint8 {
 	if opacityRegex.MatchString(opacityStr) {
 		opacityPercent, err := strconv.ParseUint(opacityStr, 10, 64)
 		if err != nil {
-			fmt.Println(fmt.Sprintf("Unable to parse requested opacity '%s'", opacityStr))
+			log.Debug(fmt.Sprintf("Unable to parse requested opacity '%s'", opacityStr))
 			return constants.DefaultTileOpacity
 		}
 		return uint8(math.Round(float64(opacityPercent) * float64(255) / float64(100)))
