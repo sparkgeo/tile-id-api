@@ -43,6 +43,13 @@ func main() {
 			createHandlerClosure(eachHandler, allIdentifiers),
 		)
 	}
+	router.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir("./swagger/"))))
+	router.HandleFunc("/openapi.yml", func(writer http.ResponseWriter, request *http.Request) {
+		http.ServeFile(writer, request, "openapi.yml")
+	})
+	router.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		http.Redirect(writer, request, "/docs/", http.StatusMovedPermanently)
+	})
 	listenPort := configUtil.GetListenPort()
 	log.Info(fmt.Sprintf("Server port %d", listenPort))
 	listenAddress := fmt.Sprintf(":%d", listenPort)

@@ -38,7 +38,7 @@ def wait() -> None:
 
 while True:
     try:
-        response = requests.get(request_root)
+        response = requests.get(f"{request_root}/nonexistent")
         if response.status_code == 404:
             print("server available")
             break
@@ -47,6 +47,13 @@ while True:
     except Exception:
         wait()
 
+if requests.get(f"{request_root}/openapi.yml").status_code != 200:
+    raise Exception("openapi.yml not found")
+root_response = requests.get(f"{request_root}/", allow_redirects=False)
+if root_response.status_code < 300 or root_response.status_code >= 400:
+    raise Exception("root redirect not found")
+if root_response.headers["location"] != "/docs/":
+    raise Exception("docs not found")
 for tile_type, paths in tile_paths.items():
     for path in paths:
         headers: Dict[str, str] = {}

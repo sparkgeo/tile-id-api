@@ -2,5 +2,5 @@
 
 set -e
 
-docker compose build unittest
+docker compose build api unittest
 docker compose run unittest

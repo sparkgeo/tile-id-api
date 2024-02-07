@@ -21,3 +21,8 @@ services:
       - ./scripts/docker:/tests:ro
     depends_on:
       - api
+  validateopenapi:
+    build:
+      dockerfile: dockerfile.validateopenapi
+    volumes:
+      - ./openapi.yml:/openapi/openapi.yml:ro

@@ -2,7 +2,7 @@
 
 dco="docker compose -p integrationtest"
 
-$dco build integrationtest
+$dco build api integrationtest
 $dco up api -d
 $dco run integrationtest
 exit_code=$?

@@ -1,0 +1,8 @@
+FROM python:3.12-alpine3.19
+
+RUN pip install openapi-spec-validator
+
+WORKDIR /openapi
+
+COPY openapi.yml .
+CMD ["openapi-spec-validator", "openapi.yml"]
