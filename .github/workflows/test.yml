@@ -1,0 +1,15 @@
+name: Execute Tests
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    name: Execute Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run
+        run: scripts/run-tests-in-container.sh

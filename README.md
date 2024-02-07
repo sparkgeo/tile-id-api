@@ -1,5 +1,7 @@
 # Tile ID API
 
+[![Execute Tests](https://github.com/captaincoordinates/tile-id-api/actions/workflows/test.yml/badge.svg)](https://github.com/captaincoordinates/tile-id-api/actions/workflows/test.yml)
+
 Simple HTTP API to support map tile identification across a number of tiling schemes, written in Go.
 
 Valid requests produce a tile response, with the tile's ID in multiple tiling schemes shown in the image. The same tile IDs are also provided as HTTP response headers alongside the tile's bounds in WGS84 Longitude / Latitude.
