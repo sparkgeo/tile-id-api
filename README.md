@@ -47,6 +47,13 @@ By default the API binds to port 8080. This can be changed by setting an environ
 go build && TILE_ID_SERVER_PORT=8123 ./tile-id-api
 ```
 
+## Log Level
+
+By default the API logs `info` messages. Change this to a supported log level with `TILE_ID_LOG_LEVEL`. Supported log levels include `panic, fatal, error, warn, info, debug, trace`:
+```sh
+go build && TILE_ID_LOG_LEVEL=debug ./tile-id-api
+```
+
 ## Docker
 
 The API can be run in a container and by default the container will bind to local port `8123`. This can be changed by setting an environment variable `TILE_ID_LISTEN_PORT` to a suitable port:

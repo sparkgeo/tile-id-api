@@ -8,7 +8,7 @@ import (
 	"github.com/captaincoordinates/tile-id-api/config"
 	"github.com/captaincoordinates/tile-id-api/geo"
 	"github.com/captaincoordinates/tile-id-api/handler"
-	"github.com/sirupsen/logrus"
+	"github.com/captaincoordinates/tile-id-api/log"
 
 	"github.com/captaincoordinates/tile-id-api/handler/quadkey"
 	"github.com/captaincoordinates/tile-id-api/handler/tms"
@@ -20,7 +20,7 @@ import (
 var tileUtil handler.TileUtil = handler.NewTileUtil()
 var configUtil config.ConfigUtil = config.NewConfigUtil()
 var paramsUtil params.ParamsUtil = params.NewParamsUtil()
-var log = logrus.New()
+var logger = log.NewLogger(config.DefaultEnvGetter)
 
 func main() {
 	handlers := []handler.TileHandler{
@@ -51,7 +51,7 @@ func main() {
 		http.Redirect(writer, request, "/docs/", http.StatusMovedPermanently)
 	})
 	listenPort := configUtil.GetListenPort()
-	log.Info(fmt.Sprintf("Server port %d", listenPort))
+	logger.Info(fmt.Sprintf("Server port %d", listenPort))
 	listenAddress := fmt.Sprintf(":%d", listenPort)
 	err := http.ListenAndServe(listenAddress, router)
 	if err != nil {
@@ -80,7 +80,7 @@ func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []stri
 		for i, identifier := range sortIdentifiers(allIdentifiers, thisHandler.Identifier()) {
 			tileKey, keyExists := tileKeysByIdentifier[identifier]
 			if !keyExists {
-				log.Warn(fmt.Sprintf(
+				logger.Warn(fmt.Sprintf(
 					"'%s' handler does not support identifier '%s'",
 					thisHandler.Identifier(),
 					identifier,
@@ -92,7 +92,7 @@ func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []stri
 		}
 		tileZxy, zxyError := thisHandler.AsZXY(request)
 		if zxyError != nil {
-			log.Warn(zxyError.Error())
+			logger.Warn(zxyError.Error())
 		} else {
 			writer.Header().Set("X-tile-bounds-ll84", geo.GetTileBounds(tileZxy[0], tileZxy[1], tileZxy[2]).ToString())
 		}

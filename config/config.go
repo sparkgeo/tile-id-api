@@ -6,27 +6,30 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/captaincoordinates/tile-id-api/common"
 	"github.com/captaincoordinates/tile-id-api/constants"
-	"github.com/sirupsen/logrus"
+	"github.com/captaincoordinates/tile-id-api/log"
 )
 
-var log = logrus.New()
+var DefaultEnvGetter = os.LookupEnv
+
+var logger = log.NewLogger(DefaultEnvGetter)
 
 type ConfigUtil struct {
-	envGetter func(string) string
+	envGetter common.EnvGetter
 }
 
 func NewConfigUtil() ConfigUtil {
 	return ConfigUtil{
-		envGetter: os.Getenv,
+		envGetter: os.LookupEnv,
 	}
 }
 
 func (self ConfigUtil) GetListenPort() uint {
-	configuredPortStr := self.envGetter("TILE_ID_SERVER_PORT")
+	configuredPortStr, _ := self.envGetter("TILE_ID_SERVER_PORT")
 	portRegex := regexp.MustCompile("^\\d{2,5}$")
 	logFail := func() {
-		log.Debug(fmt.Sprintf(
+		logger.Debug(fmt.Sprintf(
 			"Unable to parse configured port '%s', returning default %d",
 			configuredPortStr,
 			constants.DefaultPort,
@@ -43,4 +46,8 @@ func (self ConfigUtil) GetListenPort() uint {
 		logFail()
 		return constants.DefaultPort
 	}
+}
+
+func (self ConfigUtil) GetEnvVar(key string) (string, bool) {
+	return self.envGetter(key)
 }

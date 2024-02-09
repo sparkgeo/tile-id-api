@@ -6,14 +6,15 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
 
+	"github.com/captaincoordinates/tile-id-api/config"
 	"github.com/captaincoordinates/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/handler/common"
+	"github.com/captaincoordinates/tile-id-api/log"
 )
 
-var log = logrus.New()
+var logger = log.NewLogger(config.DefaultEnvGetter)
 
 type QuadkeyTileHandler struct {
 	flipYProvider         common.FlipYProvider
@@ -41,7 +42,7 @@ func (self QuadkeyTileHandler) Keys(request *http.Request) (map[string]string, h
 	quadkey := self.pathParamsMapProvider(request)["quadkey"]
 	zxy, err := self.quadkeyToZxyProvider(quadkey)
 	if err != nil {
-		log.Warn(fmt.Sprintf("Validated quadkey that could not be converted: '%s'", quadkey))
+		logger.Warn(fmt.Sprintf("Validated quadkey that could not be converted: '%s'", quadkey))
 		return nil, handler.NewReturnableError(
 			422,
 			fmt.Sprintf("Could not convert '%s' to required format", quadkey),

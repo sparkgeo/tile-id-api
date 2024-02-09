@@ -7,8 +7,8 @@ import (
 
 func TestGetListenPortValid(t *testing.T) {
 	requestedPort := uint(12345)
-	envGetter := func(key string) string {
-		return fmt.Sprint(requestedPort)
+	envGetter := func(key string) (string, bool) {
+		return fmt.Sprint(requestedPort), true
 	}
 	returnedPort := (ConfigUtil{
 		envGetter: envGetter,
