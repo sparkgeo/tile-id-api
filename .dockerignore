@@ -1,4 +1,4 @@
-tile-id-api
+tile-id-api/tile-id-api
 dockerfile.*
 docker-compose.yml
 README.md

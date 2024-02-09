@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pushd $(dirname $0)/..
+
 dco="docker compose -p integrationtest"
 
 $dco build api integrationtest

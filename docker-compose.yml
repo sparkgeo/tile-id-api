@@ -6,12 +6,12 @@ services:
     ports:
       - ${TILE_ID_LISTEN_PORT:-8123}:8080
     volumes:
-      - .:/src:ro
+      - ./tile-id-api:/src:ro
   unittest:
     build:
       dockerfile: dockerfile.unittest
     volumes:
-      - .:/src:ro
+      - ./tile-id-api:/src:ro
     profiles:
       - unittest
   integrationtest:
@@ -25,4 +25,4 @@ services:
     build:
       dockerfile: dockerfile.validateopenapi
     volumes:
-      - ./openapi.yml:/openapi/openapi.yml:ro
+      - ./tile-id-api/openapi.yml:/openapi/openapi.yml:ro

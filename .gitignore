@@ -3,7 +3,7 @@
 __debug_bin*
 
 # Binary
-tile-id-api
+tile-id-api/tile-id-api
 
 # Env
 .autoenv*.zsh

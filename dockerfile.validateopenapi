@@ -4,5 +4,5 @@ RUN pip install openapi-spec-validator
 
 WORKDIR /openapi
 
-COPY openapi.yml .
+COPY tile-id-api/openapi.yml .
 CMD ["openapi-spec-validator", "openapi.yml"]

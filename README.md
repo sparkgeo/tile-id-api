@@ -44,6 +44,7 @@ Only integer opacity values between 0 and 100 are permitted. Non-permitted value
 
 By default the API binds to port 8080. This can be changed by setting an environment variable `TILE_ID_SERVER_PORT` to a suitable port:
 ```sh
+cd tile-id-api/
 go build && TILE_ID_SERVER_PORT=8123 ./tile-id-api
 ```
 
@@ -51,6 +52,7 @@ go build && TILE_ID_SERVER_PORT=8123 ./tile-id-api
 
 By default the API logs `info` messages. Change this to a supported log level with `TILE_ID_LOG_LEVEL`. Supported log levels include `panic, fatal, error, warn, info, debug, trace`:
 ```sh
+cd tile-id-api/
 go build && TILE_ID_LOG_LEVEL=debug ./tile-id-api
 ```
 
@@ -65,6 +67,7 @@ TILE_ID_LISTEN_PORT=8999 scripts/run-in-container.sh
 
 Unit tests can be executed locally:
 ```sh
+cd tile-id-api/
 go test ./... -v
 ```
 
