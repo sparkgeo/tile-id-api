@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: dockerfile.api
     ports:
-      - ${TILE_ID_LISTEN_PORT:-8123}:80
+      - ${TILE_ID_LISTEN_PORT:-8123}:8080
     volumes:
       - .:/src:ro
   unittest:

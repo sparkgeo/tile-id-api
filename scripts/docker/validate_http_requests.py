@@ -3,7 +3,7 @@ from typing import Dict, Final, List
 from random import randint
 from time import sleep
 
-request_root: Final[str] = "http://api"
+request_root: Final[str] = "http://api:8080"
 tile_paths: Final[Dict[str, List[str]]] = {
     "xyz": [
         "0/0/0",

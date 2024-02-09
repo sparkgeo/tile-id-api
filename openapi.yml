@@ -201,5 +201,10 @@ paths:
       responses:
         "200":
           $ref: '#/components/responses/TileResponse'
-
-
+  /healthz:
+    get:
+      tags:
+        - Health Check
+      responses:
+        "200":
+          description: Healthy

@@ -47,6 +47,9 @@ func main() {
 	router.HandleFunc("/openapi.yml", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, "openapi.yml")
 	})
+	router.HandleFunc("/healthz", func(writer http.ResponseWriter, request *http.Request) {
+		writer.WriteHeader(200)
+	})
 	router.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		http.Redirect(writer, request, "/docs/", http.StatusMovedPermanently)
 	})
