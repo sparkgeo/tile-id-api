@@ -1,7 +1,8 @@
-import requests
-from typing import Dict, Final, List
 from random import randint
 from time import sleep
+from typing import Dict, Final, List
+
+import requests
 
 request_root: Final[str] = "http://api:8080"
 tile_paths: Final[Dict[str, List[str]]] = {
@@ -35,6 +36,7 @@ tile_paths: Final[Dict[str, List[str]]] = {
 def wait() -> None:
     print("...waiting for server")
     sleep(1)
+
 
 while True:
     try:

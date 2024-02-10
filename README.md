@@ -80,3 +80,10 @@ scripts/run-integration-tests-in-container.sh # execute all integration tests
 # this script is executed in CI
 scripts/run-tests-in-container.sh   # validate OpenAPI spec, execute unit tests, execute integration tests
 ```
+
+## Development
+
+Requires Python >= 3.8. To configure the local environment:
+```sh
+scripts/dev-init.sh
+```
