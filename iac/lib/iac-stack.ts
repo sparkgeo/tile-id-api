@@ -12,17 +12,13 @@ export class IacStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const vpc = new Vpc(this, "vpc", {
-      maxAzs: 2,
-    });
-
-    const cluster = new Cluster(this, "cluster", {
-      vpc: vpc,
-      containerInsights: true,
-    });
-
     const service = new ApplicationLoadBalancedFargateService(this, "ALBFargateSvc", {
-      cluster: cluster,
+      cluster: new Cluster(this, "cluster", {
+        vpc: new Vpc(this, "vpc", {
+          maxAzs: 2,
+        }),
+        containerInsights: true,
+      }),
       memoryLimitMiB: 512,
       assignPublicIp: true,
       desiredCount: 1,
