@@ -1,7 +1,11 @@
 openapi: 3.0.0
 info:
   title: Tile ID API
+  description: Simple tile API to support map tile identification across different tiling schemes.
   version: 0.0.1
+externalDocs:
+  description: Source code, feature requests, and bug reports.
+  url: https://github.com/captaincoordinates/tile-id-api
 components:
   responses:
     TileResponse:
