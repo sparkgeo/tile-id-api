@@ -8,5 +8,8 @@ tile-id-api/tile-id-api
 # Env
 .autoenv*.zsh
 
+# CDK
+iac/cdk.context.json
+
 # Local
 **/.DS_Store
