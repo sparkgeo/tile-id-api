@@ -19,3 +19,10 @@ repos:
       exclude: setup.py
       additional_dependencies: 
         - types-requests
+-   repo: local
+    hooks:
+    - id: custom-gofmt
+      name: custom-gofmt
+      entry: bash .pre-commit-gofmt.sh
+      language: system
+      pass_filenames: false
