@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"slices"
@@ -18,11 +19,12 @@ import (
 )
 
 var tileUtil handler.TileUtil = handler.NewTileUtil()
-var configUtil config.ConfigUtil = config.NewConfigUtil()
 var paramsUtil params.ParamsUtil = params.NewParamsUtil()
 var logger = log.NewLogger(config.DefaultEnvGetter)
 
 func main() {
+	listenPort := flag.Int("server-port", 8080, "Port the server listens on")
+	flag.Parse()
 	handlers := []handler.TileHandler{
 		tms.NewTmsTileHandler(),
 		zxy.NewZxyTileHandler(),
@@ -53,9 +55,8 @@ func main() {
 	router.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		http.Redirect(writer, request, "/docs/", http.StatusMovedPermanently)
 	})
-	listenPort := configUtil.GetListenPort()
-	logger.Info(fmt.Sprintf("Server port %d", listenPort))
-	listenAddress := fmt.Sprintf(":%d", listenPort)
+	logger.Info(fmt.Sprintf("Server port %d", *listenPort))
+	listenAddress := fmt.Sprintf(":%d", *listenPort)
 	err := http.ListenAndServe(listenAddress, router)
 	if err != nil {
 		panic(err)

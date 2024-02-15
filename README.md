@@ -42,10 +42,10 @@ Only integer opacity values between 0 and 100 are permitted. Non-permitted value
 
 ## Host Port
 
-By default the API binds to port 8080. This can be changed by setting an environment variable `TILE_ID_SERVER_PORT` to a suitable port:
+By default the API binds to port 8080. This can be changed by setting a flag `server-port` to a suitable port:
 ```sh
 cd tile-id-api/
-go build && TILE_ID_SERVER_PORT=8123 ./tile-id-api
+go build && ./tile-id-api --server-port 8123
 ```
 
 ## Log Level
