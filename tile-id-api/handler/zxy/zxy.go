@@ -1,12 +1,10 @@
 package zxy
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/params"
 	"github.com/sirupsen/logrus"
@@ -35,9 +33,9 @@ func (self ZxyTileHandler) PathPattern() string {
 	return common.ZxyPathPattern
 }
 
-func (self ZxyTileHandler) Keys(request *http.Request) (map[string]string, handler.ReturnableError) {
+func (self ZxyTileHandler) Keys(request *http.Request) (map[string]string, error) {
 	pathParams, err := self.intPathParamsProvider(request, "z", "x", "y")
-	if err != handler.NoReturnableError {
+	if err != nil {
 		return nil, err
 	}
 	z, x, y := pathParams[0], pathParams[1], pathParams[2]
@@ -45,13 +43,13 @@ func (self ZxyTileHandler) Keys(request *http.Request) (map[string]string, handl
 		constants.ZxyIdentifier:     fmt.Sprintf("%d/%d/%d", z, x, y),
 		constants.TmsIdentifier:     fmt.Sprintf("%d/%d/%d", z, x, self.flipYProvider(z, y)),
 		constants.QuadkeyIdentifier: self.zxyToQuadkeyProvider(z, x, y),
-	}, handler.NoReturnableError
+	}, nil
 }
 
 func (self ZxyTileHandler) AsZXY(request *http.Request) ([3]int, error) {
 	params, err := self.intPathParamsProvider(request, "z", "x", "y")
-	if err != handler.NoReturnableError {
-		return [3]int{}, errors.New(err.ErrorMessage)
+	if err != nil {
+		return [3]int{}, err
 	}
 	return [3]int{params[0], params[1], params[2]}, nil
 }

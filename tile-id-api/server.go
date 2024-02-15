@@ -78,11 +78,11 @@ func createHandlerClosure(
 		}
 		writer.Header().Set("X-tile-opacity", fmt.Sprintf("%d/255", opacity))
 		tileKeysByIdentifier, tileKeysErr := thisHandler.Keys(request)
-		if tileKeysErr != handler.NoReturnableError {
+		if tileKeysErr != nil {
 			http.Error(
 				writer,
-				tileKeysErr.ErrorMessage,
-				tileKeysErr.StatusCode,
+				tileKeysErr.Error(),
+				statusCodeFromError(tileKeysErr),
 			)
 			return
 		}
@@ -120,4 +120,14 @@ func createHandlerClosure(
 			return
 		}
 	}
+}
+
+func statusCodeFromError(err error) int {
+	if _, ok := err.(handler.BadRequestError); ok {
+		return http.StatusBadRequest
+	}
+	if _, ok := err.(handler.UnprocessableEntityError); ok {
+		return http.StatusUnprocessableEntity
+	}
+	return http.StatusInternalServerError
 }

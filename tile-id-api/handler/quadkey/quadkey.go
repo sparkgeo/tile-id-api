@@ -37,13 +37,12 @@ func (self QuadkeyTileHandler) PathPattern() string {
 	return "{quadkey:[0-3]{0,25}}"
 }
 
-func (self QuadkeyTileHandler) Keys(request *http.Request) (map[string]string, handler.ReturnableError) {
+func (self QuadkeyTileHandler) Keys(request *http.Request) (map[string]string, error) {
 	quadkey := self.pathParamsMapProvider(request)["quadkey"]
 	zxy, err := self.quadkeyToZxyProvider(quadkey)
 	if err != nil {
 		self.logger.Warn(fmt.Sprintf("Validated quadkey that could not be converted: '%s'", quadkey))
-		return nil, handler.NewReturnableError(
-			422,
+		return nil, handler.NewUnprocessableEntityError(
 			fmt.Sprintf("Could not convert '%s' to required format", quadkey),
 		)
 	}
@@ -52,7 +51,7 @@ func (self QuadkeyTileHandler) Keys(request *http.Request) (map[string]string, h
 		constants.QuadkeyIdentifier: quadkey,
 		constants.ZxyIdentifier:     fmt.Sprintf("%d/%d/%d", z, x, y),
 		constants.TmsIdentifier:     fmt.Sprintf("%d/%d/%d", z, x, self.flipYProvider(z, y)),
-	}, handler.NoReturnableError
+	}, nil
 }
 
 func (self QuadkeyTileHandler) AsZXY(request *http.Request) ([3]int, error) {

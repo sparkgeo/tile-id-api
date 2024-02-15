@@ -14,7 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type IntPathParamsProvider = func(request *http.Request, paramNames ...string) ([]int, handler.ReturnableError)
+type IntPathParamsProvider = func(request *http.Request, paramNames ...string) ([]int, error)
 
 type ParamsUtil struct {
 	pathParamsProvider  func(*http.Request) map[string]string
@@ -39,27 +39,25 @@ func NewParamsUtil(logger logrus.FieldLogger) ParamsUtil {
 func (self ParamsUtil) IntPathParams(
 	request *http.Request,
 	paramNames ...string,
-) ([]int, handler.ReturnableError) {
+) ([]int, error) {
 	vars := self.pathParamsProvider(request)
 	parsedInts := make([]int, len(paramNames))
 	for i, paramName := range paramNames {
 		paramStr, ok := vars[paramName]
 		if !ok {
-			return make([]int, 0), handler.NewReturnableError(
-				http.StatusBadRequest,
+			return make([]int, 0), handler.NewBadRequestError(
 				fmt.Sprintf("Missing expected parameter %s", paramName),
 			)
 		}
 		paramInt, err := strconv.ParseInt(paramStr, 10, 64)
 		if err != nil {
-			return make([]int, 0), handler.NewReturnableError(
-				http.StatusBadRequest,
+			return make([]int, 0), handler.NewBadRequestError(
 				fmt.Sprintf("Parameter %s cannot be parsed to int (value %s)", paramName, paramStr),
 			)
 		}
 		parsedInts[i] = int(paramInt)
 	}
-	return parsedInts, handler.NoReturnableError
+	return parsedInts, nil
 }
 
 func (self ParamsUtil) Opacity(request *http.Request) uint8 {

@@ -21,8 +21,8 @@ func TestIntPathParamsValid(t *testing.T) {
 			}
 		},
 	}
-	intParams, returnableError := paramsUtil.IntPathParams(&http.Request{}, "first", "second")
-	if returnableError != handler.NoReturnableError {
+	intParams, err := paramsUtil.IntPathParams(&http.Request{}, "first", "second")
+	if err != nil {
 		t.Error("Unexpected error")
 	}
 	if !(intParams[0] == 719 && intParams[1] == 1104321) {
@@ -36,12 +36,12 @@ func TestIntPathParamsMissingParameter(t *testing.T) {
 			return map[string]string{}
 		},
 	}
-	_, returnableError := paramsUtil.IntPathParams(&http.Request{}, "missing")
-	if returnableError == handler.NoReturnableError {
+	_, err := paramsUtil.IntPathParams(&http.Request{}, "missing")
+	if err == nil {
 		t.Error("Expected an error but didn't get one")
 	}
-	if returnableError.StatusCode != 400 {
-		t.Errorf("Expected 400 error, got %d", returnableError.StatusCode)
+	if _, ok := err.(handler.BadRequestError); ok {
+		t.Errorf("Expected bad request error, got %v", err)
 	}
 }
 
@@ -53,12 +53,12 @@ func TestIntPathParamsNotInt(t *testing.T) {
 			}
 		},
 	}
-	_, returnableError := paramsUtil.IntPathParams(&http.Request{}, "first")
-	if returnableError == handler.NoReturnableError {
+	_, err := paramsUtil.IntPathParams(&http.Request{}, "first")
+	if err == nil {
 		t.Error("Expected an error but didn't get one")
 	}
-	if returnableError.StatusCode != 400 {
-		t.Errorf("Expected 400 error, got %d", returnableError.StatusCode)
+	if _, ok := err.(handler.BadRequestError); ok {
+		t.Errorf("Expected 400 error, got %v", err)
 	}
 }
 

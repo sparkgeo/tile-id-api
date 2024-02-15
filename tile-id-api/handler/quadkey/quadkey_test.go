@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
 	"github.com/sirupsen/logrus"
 )
 
@@ -47,7 +46,7 @@ func TestKeysInvalidRequest(t *testing.T) {
 		logger:                logrus.New(),
 	}
 	_, keysError := tileHandler.Keys(&http.Request{})
-	if keysError == handler.NoReturnableError {
+	if keysError == nil {
 		t.Error("Dependency raised an error but this was not propagated to caller")
 	}
 }

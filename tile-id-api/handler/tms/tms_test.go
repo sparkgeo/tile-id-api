@@ -1,6 +1,7 @@
 package tms
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"net/http"
@@ -8,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
 	"github.com/sirupsen/logrus"
 )
@@ -48,14 +48,14 @@ func TestKeysValid(t *testing.T) {
 }
 
 func TestKeysInvalidRequest(t *testing.T) {
-	intPathParamsProvider := func(*http.Request, ...string) ([]int, handler.ReturnableError) {
-		return nil, handler.NewReturnableError(418, "Spurious error")
+	intPathParamsProvider := func(*http.Request, ...string) ([]int, error) {
+		return nil, errors.New("Spurious error")
 	}
 	tileHandler := TmsTileHandler{
 		intPathParamsProvider: intPathParamsProvider,
 	}
 	_, keysError := tileHandler.Keys(&http.Request{})
-	if keysError == handler.NoReturnableError {
+	if keysError == nil {
 		t.Error("Dependency raised an error but this was not propagated to caller")
 	}
 }
@@ -74,8 +74,8 @@ func TestAsZXYValid(t *testing.T) {
 }
 
 func TestAsZXYInvalidRequest(t *testing.T) {
-	intPathParamsProvider := func(*http.Request, ...string) ([]int, handler.ReturnableError) {
-		return nil, handler.NewReturnableError(418, "Spurious error")
+	intPathParamsProvider := func(*http.Request, ...string) ([]int, error) {
+		return nil, errors.New("Spurious error")
 	}
 	tileHandler := TmsTileHandler{
 		intPathParamsProvider: intPathParamsProvider,
@@ -86,12 +86,12 @@ func TestAsZXYInvalidRequest(t *testing.T) {
 	}
 }
 
-func getIntPathParamsProvider(z, x, y int) func(*http.Request, ...string) ([]int, handler.ReturnableError) {
+func getIntPathParamsProvider(z, x, y int) func(*http.Request, ...string) ([]int, error) {
 	return func(
 		request *http.Request,
 		paramNames ...string,
-	) ([]int, handler.ReturnableError) {
-		return []int{z, x, y}, handler.NoReturnableError
+	) ([]int, error) {
+		return []int{z, x, y}, nil
 	}
 }
 
