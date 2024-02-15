@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestSortIdentifiers(t *testing.T) {
-	sorted := sortIdentifiers([]string{
+	sorted := SortIdentifiers([]string{
 		"c",
 		"b",
 		"f",

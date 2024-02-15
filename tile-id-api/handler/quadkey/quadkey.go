@@ -6,27 +6,26 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/config"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/log"
 )
-
-var logger = log.NewLogger(config.DefaultEnvGetter)
 
 type QuadkeyTileHandler struct {
 	flipYProvider         common.FlipYProvider
 	quadkeyToZxyProvider  common.QuadkeyToZxyProvider
 	pathParamsMapProvider func(*http.Request) map[string]string
+	logger                logrus.FieldLogger
 }
 
-func NewQuadkeyTileHandler() *QuadkeyTileHandler {
+func NewQuadkeyTileHandler(logger logrus.FieldLogger) *QuadkeyTileHandler {
 	return &QuadkeyTileHandler{
 		flipYProvider:         common.FlipY,
 		quadkeyToZxyProvider:  common.QuadkeyToZxy,
 		pathParamsMapProvider: mux.Vars,
+		logger:                logger,
 	}
 }
 
@@ -42,7 +41,7 @@ func (self QuadkeyTileHandler) Keys(request *http.Request) (map[string]string, h
 	quadkey := self.pathParamsMapProvider(request)["quadkey"]
 	zxy, err := self.quadkeyToZxyProvider(quadkey)
 	if err != nil {
-		logger.Warn(fmt.Sprintf("Validated quadkey that could not be converted: '%s'", quadkey))
+		self.logger.Warn(fmt.Sprintf("Validated quadkey that could not be converted: '%s'", quadkey))
 		return nil, handler.NewReturnableError(
 			422,
 			fmt.Sprintf("Could not convert '%s' to required format", quadkey),

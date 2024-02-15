@@ -9,6 +9,7 @@ import (
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/params"
+	"github.com/sirupsen/logrus"
 )
 
 type ZxyTileHandler struct {
@@ -17,8 +18,8 @@ type ZxyTileHandler struct {
 	zxyToQuadkeyProvider  common.ZxyToQuadkeyProvider
 }
 
-func NewZxyTileHandler() *ZxyTileHandler {
-	paramsUtil := params.NewParamsUtil()
+func NewZxyTileHandler(logger logrus.FieldLogger) *ZxyTileHandler {
+	paramsUtil := params.NewParamsUtil(logger)
 	return &ZxyTileHandler{
 		intPathParamsProvider: paramsUtil.IntPathParams,
 		flipYProvider:         common.FlipY,

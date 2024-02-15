@@ -10,16 +10,19 @@ import (
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
+	"github.com/sirupsen/logrus"
 )
 
 func TestIdentifier(t *testing.T) {
-	if (NewTmsTileHandler()).Identifier() != constants.TmsIdentifier {
+	logger := logrus.New()
+	if (NewTmsTileHandler(logger)).Identifier() != constants.TmsIdentifier {
 		t.Error("Unexpected identifier string")
 	}
 }
 
 func TestPathPattern(t *testing.T) {
-	if (NewTmsTileHandler()).PathPattern() != common.ZxyPathPattern {
+	logger := logrus.New()
+	if (NewTmsTileHandler(logger)).PathPattern() != common.ZxyPathPattern {
 		t.Error("Unexpected path pattern string")
 	}
 }

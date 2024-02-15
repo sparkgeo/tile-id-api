@@ -8,14 +8,11 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/config"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/log"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
-
-var logger = log.NewLogger(config.DefaultEnvGetter)
 
 type IntPathParamsProvider = func(request *http.Request, paramNames ...string) ([]int, handler.ReturnableError)
 
@@ -23,9 +20,10 @@ type ParamsUtil struct {
 	pathParamsProvider  func(*http.Request) map[string]string
 	queryParamsProvider func(*http.Request) url.Values
 	headersProvider     func(*http.Request) http.Header
+	logger              logrus.FieldLogger
 }
 
-func NewParamsUtil() ParamsUtil {
+func NewParamsUtil(logger logrus.FieldLogger) ParamsUtil {
 	return ParamsUtil{
 		pathParamsProvider: mux.Vars,
 		queryParamsProvider: func(request *http.Request) url.Values {
@@ -34,6 +32,7 @@ func NewParamsUtil() ParamsUtil {
 		headersProvider: func(request *http.Request) http.Header {
 			return request.Header
 		},
+		logger: logger,
 	}
 }
 
@@ -75,7 +74,7 @@ func (self ParamsUtil) Opacity(request *http.Request) uint8 {
 	if opacityRegex.MatchString(opacityStr) {
 		opacityPercent, err := strconv.ParseUint(opacityStr, 10, 64)
 		if err != nil {
-			logger.Debug(fmt.Sprintf("Unable to parse requested opacity '%s'", opacityStr))
+			self.logger.Debug(fmt.Sprintf("Unable to parse requested opacity '%s'", opacityStr))
 			return constants.DefaultTileOpacity
 		}
 		return uint8(math.Round(float64(opacityPercent) * float64(255) / float64(100)))

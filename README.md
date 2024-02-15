@@ -50,10 +50,10 @@ go build && ./tile-id-api --server-port 8123
 
 ## Log Level
 
-By default the API logs `info` messages. Change this to a supported log level with `TILE_ID_LOG_LEVEL`. Supported log levels include `panic, fatal, error, warn, info, debug, trace`:
+By default the API logs `info` messages. Change this to a supported log level by setting a flag `log-level`. Supported log levels include `panic, fatal, error, warn, info, debug, trace`:
 ```sh
 cd tile-id-api/
-go build && TILE_ID_LOG_LEVEL=debug ./tile-id-api
+go build && ./tile-id-api --log-level debug
 ```
 
 ## Docker

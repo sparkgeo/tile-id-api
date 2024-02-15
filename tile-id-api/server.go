@@ -4,31 +4,31 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
-	"slices"
+	"strings"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/config"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/geo"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/log"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/params"
+	"github.com/sirupsen/logrus"
 
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/quadkey"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/tms"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/zxy"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/params"
 	"github.com/gorilla/mux"
 )
 
-var tileUtil handler.TileUtil = handler.NewTileUtil()
-var paramsUtil params.ParamsUtil = params.NewParamsUtil()
-var logger = log.NewLogger(config.DefaultEnvGetter)
-
 func main() {
 	listenPort := flag.Int("server-port", 8080, "Port the server listens on")
+	logLevelStr := flag.String("log-level", "info", strings.Join(log.AllLogLevels(), " | "))
 	flag.Parse()
+	logger := log.NewLogger(*logLevelStr)
+	tileUtil := handler.NewTileUtil()
+	paramsUtil := params.NewParamsUtil(logger)
 	handlers := []handler.TileHandler{
-		tms.NewTmsTileHandler(),
-		zxy.NewZxyTileHandler(),
-		quadkey.NewQuadkeyTileHandler(),
+		tms.NewTmsTileHandler(logger),
+		zxy.NewZxyTileHandler(logger),
+		quadkey.NewQuadkeyTileHandler(logger),
 	}
 	allIdentifiers := make([]string, len(handlers))
 	for i, eachHandler := range handlers {
@@ -42,7 +42,7 @@ func main() {
 				eachHandler.Identifier(),
 				eachHandler.PathPattern(),
 			),
-			createHandlerClosure(eachHandler, allIdentifiers),
+			createHandlerClosure(eachHandler, logger, paramsUtil, tileUtil, allIdentifiers),
 		)
 	}
 	router.PathPrefix("/docs/").Handler(http.StripPrefix("/docs/", http.FileServer(http.Dir("./swagger/"))))
@@ -63,7 +63,13 @@ func main() {
 	}
 }
 
-func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []string) func(http.ResponseWriter, *http.Request) {
+func createHandlerClosure(
+	thisHandler handler.TileHandler,
+	logger logrus.FieldLogger,
+	paramsUtil params.ParamsUtil,
+	tileUtil handler.TileUtil,
+	allIdentifiers []string,
+) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		encoder, supportsOpacity := tileUtil.GetEncoder(request)
 		var opacity uint8 = 255
@@ -81,7 +87,7 @@ func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []stri
 			return
 		}
 		tileKeys := make([]string, len(allIdentifiers))
-		for i, identifier := range sortIdentifiers(allIdentifiers, thisHandler.Identifier()) {
+		for i, identifier := range handler.SortIdentifiers(allIdentifiers, thisHandler.Identifier()) {
 			tileKey, keyExists := tileKeysByIdentifier[identifier]
 			if !keyExists {
 				logger.Warn(fmt.Sprintf(
@@ -114,22 +120,4 @@ func createHandlerClosure(thisHandler handler.TileHandler, allIdentifiers []stri
 			return
 		}
 	}
-}
-
-func sortIdentifiers(allIdentifiers []string, firstValue string) []string {
-	ownAllIdentifiers := allIdentifiers[:]
-	slices.Sort(ownAllIdentifiers)
-	split := -1
-	for i, identifier := range ownAllIdentifiers {
-		if identifier == firstValue {
-			split = i
-		}
-	}
-	if split == -1 {
-		return ownAllIdentifiers
-	}
-	if split == 0 {
-		return ownAllIdentifiers
-	}
-	return append(append(append([]string{}, firstValue), ownAllIdentifiers[0:split]...), ownAllIdentifiers[split+1:]...)
 }

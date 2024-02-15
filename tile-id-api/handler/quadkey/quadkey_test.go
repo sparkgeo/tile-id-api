@@ -9,10 +9,12 @@ import (
 
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
+	"github.com/sirupsen/logrus"
 )
 
 func TestIdentifier(t *testing.T) {
-	if (NewQuadkeyTileHandler()).Identifier() != constants.QuadkeyIdentifier {
+	logger := logrus.New()
+	if (NewQuadkeyTileHandler(logger)).Identifier() != constants.QuadkeyIdentifier {
 		t.Error("Unexpected identifier string")
 	}
 }
@@ -42,6 +44,7 @@ func TestKeysInvalidRequest(t *testing.T) {
 	tileHandler := QuadkeyTileHandler{
 		pathParamsMapProvider: getPathParamsMapProvider("0123"),
 		quadkeyToZxyProvider:  quadkeyToZxyProviderError,
+		logger:                logrus.New(),
 	}
 	_, keysError := tileHandler.Keys(&http.Request{})
 	if keysError == handler.NoReturnableError {

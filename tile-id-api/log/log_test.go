@@ -4,41 +4,30 @@ import (
 	"testing"
 
 	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
-	"github.com/sirupsen/logrus"
 )
 
-func TestNewLoggerValidLevel(t *testing.T) {
-	inputsOutputs := map[string]logrus.Level{
-		"FaTAL": logrus.FatalLevel,
-		"trace": logrus.TraceLevel,
+func TestAllLogLevels(t *testing.T) {
+	if len(AllLogLevels()) == 0 {
+		t.Error("Did not receive a list of log levels as expected")
 	}
-	for strLevel, levelValue := range inputsOutputs {
-		envGetter := func(_ string) (string, bool) {
-			return strLevel, true
-		}
-		logger := NewLogger(envGetter)
-		if logger.Level != levelValue {
-			t.Errorf("Unexpected log level returned for '%s': '%v'", strLevel, logger.Level)
+}
+
+func TestLogLevelFromStringValid(t *testing.T) {
+	validLogLevelStrs := []string{"trace", "panic", "error"}
+	for _, levelStr := range validLogLevelStrs {
+		level := logLevelFromString(levelStr)
+		if level.String() != levelStr {
+			t.Errorf("got unexpected level '%s' from '%s'", level.String(), levelStr)
 		}
 	}
 }
 
-func TestNewLoggerInvalidLevel(t *testing.T) {
-	envGetter := func(_ string) (string, bool) {
-		return "invalid value", true
-	}
-	logger := NewLogger(envGetter)
-	if logger.Level != constants.DefaultLogLevel {
-		t.Errorf("Unexpected log level returned for invalid value: '%v'", logger.Level)
-	}
-}
-
-func TestNewLoggerMissingLevel(t *testing.T) {
-	envGetter := func(_ string) (string, bool) {
-		return "", false
-	}
-	logger := NewLogger(envGetter)
-	if logger.Level != constants.DefaultLogLevel {
-		t.Errorf("Unexpected log level returned for missing value: '%v'", logger.Level)
+func TestLogLevelFromStringInvalid(t *testing.T) {
+	invalidLogLevelStrs := []string{"deebg", "unknown", "432$$"}
+	for _, levelStr := range invalidLogLevelStrs {
+		level := logLevelFromString(levelStr)
+		if level != constants.DefaultLogLevel {
+			t.Errorf("expected default level '%s' from '%s'", constants.DefaultLogLevel.String(), levelStr)
+		}
 	}
 }
