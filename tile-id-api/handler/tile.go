@@ -45,7 +45,6 @@ func (self TileUtil) GenerateTile(opacity uint8, labels ...string) image.Image {
 	for i, label := range labels {
 		col := color.Black
 		point := fixed.Point26_6{X: fixed.I(20), Y: fixed.I(20 + 20*i)}
-
 		d := &font.Drawer{
 			Dst:  img,
 			Src:  image.NewUniform(col),
