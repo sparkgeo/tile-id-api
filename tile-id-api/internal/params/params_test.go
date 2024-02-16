@@ -40,8 +40,8 @@ func TestIntPathParamsMissingParameter(t *testing.T) {
 	if err == nil {
 		t.Error("Expected an error but didn't get one")
 	}
-	if _, ok := err.(handler.BadRequestError); ok {
-		t.Errorf("Expected bad request error, got %v", err)
+	if _, ok := err.(handler.BadRequestError); !ok {
+		t.Errorf("Expected bad request error, got %v (type %T)", err, err)
 	}
 }
 
@@ -57,8 +57,8 @@ func TestIntPathParamsNotInt(t *testing.T) {
 	if err == nil {
 		t.Error("Expected an error but didn't get one")
 	}
-	if _, ok := err.(handler.BadRequestError); ok {
-		t.Errorf("Expected 400 error, got %v", err)
+	if _, ok := err.(handler.BadRequestError); !ok {
+		t.Errorf("Expected bad request error, got %v (type %T)", err, err)
 	}
 }
 

@@ -4,8 +4,8 @@ type BadRequestError struct {
 	reason string
 }
 
-func NewBadRequestError(reason string) *BadRequestError {
-	return &BadRequestError{
+func NewBadRequestError(reason string) BadRequestError {
+	return BadRequestError{
 		reason,
 	}
 }
@@ -18,8 +18,8 @@ type UnprocessableEntityError struct {
 	reason string
 }
 
-func NewUnprocessableEntityError(reason string) *UnprocessableEntityError {
-	return &UnprocessableEntityError{
+func NewUnprocessableEntityError(reason string) UnprocessableEntityError {
+	return UnprocessableEntityError{
 		reason,
 	}
 }

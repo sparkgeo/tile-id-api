@@ -46,7 +46,7 @@ func (self ParamsUtil) IntPathParams(
 		paramStr, ok := vars[paramName]
 		if !ok {
 			return make([]int, 0), handler.NewBadRequestError(
-				fmt.Sprintf("Missing expected parameter %s", paramName),
+				fmt.Sprintf("Missing expected parameter '%s'", paramName),
 			)
 		}
 		paramInt, err := strconv.ParseInt(paramStr, 10, 64)
