@@ -23,8 +23,8 @@ func NewTileBounds(
 	}
 }
 
-func (self TileBounds) ToString() string {
-	bytes, err := json.Marshal(self)
+func (bounds TileBounds) ToString() string {
+	bytes, err := json.Marshal(bounds)
 	if err != nil {
 		return "error serializing bounds"
 	}

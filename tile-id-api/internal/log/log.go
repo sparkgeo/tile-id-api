@@ -17,7 +17,7 @@ func AllLogLevels() []string {
 
 func NewLogger(logLevelString string) logrus.FieldLogger {
 	logLevel := logLevelFromString(logLevelString)
-	fmt.Println(fmt.Sprintf("logging at level '%s'", logLevel.String()))
+	fmt.Printf("logging at level '%s'\n", logLevel.String())
 	logger := logrus.New()
 	logger.SetLevel(logLevel)
 	return logger
@@ -28,7 +28,7 @@ func logLevelFromString(logLevelString string) logrus.Level {
 	if err != nil {
 		logLevel = constants.DefaultLogLevel
 		fmt.Println(err.Error())
-		fmt.Println(fmt.Sprintf("defaulting to '%s' log level", logLevel.String()))
+		fmt.Printf("defaulting to '%s' log level\n", logLevel.String())
 	}
 	return logLevel
 }

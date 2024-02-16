@@ -27,7 +27,7 @@ func NewTileUtil() TileUtil {
 	}
 }
 
-func (self TileUtil) GenerateTile(opacity uint8, labels ...string) image.Image {
+func (util TileUtil) GenerateTile(opacity uint8, labels ...string) image.Image {
 	upLeft := image.Point{0, 0}
 	lowRight := image.Point{constants.TileWidth, constants.TileHeight}
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
@@ -56,9 +56,9 @@ func (self TileUtil) GenerateTile(opacity uint8, labels ...string) image.Image {
 	return img
 }
 
-func (self TileUtil) GetEncoder(request *http.Request) (encoder func(io.Writer, image.Image) error, supportsOpacity bool) {
+func (util TileUtil) GetEncoder(request *http.Request) (encoder func(io.Writer, image.Image) error, supportsOpacity bool) {
 	extension := regexp.MustCompile("^\\.").ReplaceAllString(
-		self.pathParamsMapProvider(request)["extension"],
+		util.pathParamsMapProvider(request)["extension"],
 		"",
 	)
 	switch extension {

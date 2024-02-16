@@ -10,8 +10,8 @@ func NewBadRequestError(reason string) BadRequestError {
 	}
 }
 
-func (self BadRequestError) Error() string {
-	return self.reason
+func (err BadRequestError) Error() string {
+	return err.reason
 }
 
 type UnprocessableEntityError struct {
@@ -24,6 +24,6 @@ func NewUnprocessableEntityError(reason string) UnprocessableEntityError {
 	}
 }
 
-func (self UnprocessableEntityError) Error() string {
-	return self.reason
+func (err UnprocessableEntityError) Error() string {
+	return err.reason
 }

@@ -36,11 +36,11 @@ func NewParamsUtil(logger logrus.FieldLogger) ParamsUtil {
 	}
 }
 
-func (self ParamsUtil) IntPathParams(
+func (util ParamsUtil) IntPathParams(
 	request *http.Request,
 	paramNames ...string,
 ) ([]int, error) {
-	vars := self.pathParamsProvider(request)
+	vars := util.pathParamsProvider(request)
 	parsedInts := make([]int, len(paramNames))
 	for i, paramName := range paramNames {
 		paramStr, ok := vars[paramName]
@@ -60,10 +60,10 @@ func (self ParamsUtil) IntPathParams(
 	return parsedInts, nil
 }
 
-func (self ParamsUtil) Opacity(request *http.Request) uint8 {
-	opacityStr := self.queryParamsProvider(request).Get("opacityPercent") // case-sensitive
+func (util ParamsUtil) Opacity(request *http.Request) uint8 {
+	opacityStr := util.queryParamsProvider(request).Get("opacityPercent") // case-sensitive
 	if opacityStr == "" {
-		opacityStr = self.headersProvider(request).Get("X-Opacity-Percent") // case-insensitive
+		opacityStr = util.headersProvider(request).Get("X-Opacity-Percent") // case-insensitive
 		if opacityStr == "" {
 			return constants.DefaultTileOpacity
 		}
@@ -72,7 +72,7 @@ func (self ParamsUtil) Opacity(request *http.Request) uint8 {
 	if opacityRegex.MatchString(opacityStr) {
 		opacityPercent, err := strconv.ParseUint(opacityStr, 10, 64)
 		if err != nil {
-			self.logger.Debug(fmt.Sprintf("Unable to parse requested opacity '%s'", opacityStr))
+			util.logger.Debug(fmt.Sprintf("Unable to parse requested opacity '%s'", opacityStr))
 			return constants.DefaultTileOpacity
 		}
 		return uint8(math.Round(float64(opacityPercent) * float64(255) / float64(100)))
