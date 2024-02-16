@@ -7,7 +7,7 @@ COPY tile-id-api/go.sum .
 RUN go mod download
 
 COPY tile-id-api/ .
-RUN go build
+RUN go build ./cmd/tile-id-api/
 
 
 FROM alpine:3.19 
@@ -17,10 +17,13 @@ COPY tile-id-api/openapi.yml /
 COPY tile-id-api/swagger /swagger
 
 ARG SERVER_PORT=8080
-ENV TILE_ID_SERVER_PORT=${SERVER_PORT}
+ENV SERVER_PORT_ENV=${SERVER_PORT}
 EXPOSE ${SERVER_PORT}
+
+ARG LOG_LEVEL=info
+ENV LOG_LEVEL_ENV=${LOG_LEVEL}
 
 RUN adduser -S apiuser
 USER apiuser
 
-CMD ["/tile-id-api"]
+CMD ["sh", "-c", "/tile-id-api --server-port ${SERVER_PORT_ENV} --log-level ${LOG_LEVEL_ENV}"]

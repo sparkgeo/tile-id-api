@@ -2,8 +2,9 @@
 .vscode
 __debug_bin*
 
-# Binary
+# Build Products
 tile-id-api/tile-id-api
+.pre-commit-gofmt.sh
 
 # Env
 .autoenv*.zsh
