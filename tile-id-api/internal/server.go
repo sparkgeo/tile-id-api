@@ -1,28 +1,21 @@
-package main
+package internal
 
 import (
-	"flag"
 	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/geo"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/log"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/params"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/geo"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/params"
 	"github.com/sirupsen/logrus"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/quadkey"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/tms"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/zxy"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/quadkey"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/tms"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/zxy"
 	"github.com/gorilla/mux"
 )
 
-func main() {
-	listenPort := flag.Int("server-port", 8080, "Port the server listens on")
-	logLevelStr := flag.String("log-level", "info", strings.Join(log.AllLogLevels(), " | "))
-	flag.Parse()
-	logger := log.NewLogger(*logLevelStr)
+func ConfigureRouter(logger logrus.FieldLogger) *mux.Router {
 	tileUtil := handler.NewTileUtil()
 	paramsUtil := params.NewParamsUtil(logger)
 	handlers := []handler.TileHandler{
@@ -55,12 +48,7 @@ func main() {
 	router.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		http.Redirect(writer, request, "/docs/", http.StatusMovedPermanently)
 	})
-	logger.Info(fmt.Sprintf("Server port %d", *listenPort))
-	listenAddress := fmt.Sprintf(":%d", *listenPort)
-	err := http.ListenAndServe(listenAddress, router)
-	if err != nil {
-		panic(err)
-	}
+	return router
 }
 
 func createHandlerClosure(

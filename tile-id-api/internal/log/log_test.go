@@ -3,7 +3,7 @@ package log
 import (
 	"testing"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
 )
 
 func TestAllLogLevels(t *testing.T) {

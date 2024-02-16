@@ -8,9 +8,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/common"
 )
 
 type QuadkeyTileHandler struct {

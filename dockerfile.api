@@ -7,7 +7,7 @@ COPY tile-id-api/go.sum .
 RUN go mod download
 
 COPY tile-id-api/ .
-RUN go build
+RUN go build ./cmd/tile-id-api/
 
 
 FROM alpine:3.19 

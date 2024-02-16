@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
 	"github.com/gorilla/mux"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"

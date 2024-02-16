@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/common"
 	"github.com/sirupsen/logrus"
 )
 

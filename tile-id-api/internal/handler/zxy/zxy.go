@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/handler/common"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/params"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/common"
+	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/params"
 	"github.com/sirupsen/logrus"
 )
 

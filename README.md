@@ -45,7 +45,7 @@ Only integer opacity values between 0 and 100 are permitted. Non-permitted value
 By default the API binds to port 8080. This can be changed by setting a flag `server-port` to a suitable port:
 ```sh
 cd tile-id-api/
-go build && ./tile-id-api --server-port 8123
+go build ./cmd/tile-id-api/ && ./tile-id-api --server-port 8123
 ```
 
 ## Log Level
@@ -53,7 +53,7 @@ go build && ./tile-id-api --server-port 8123
 By default the API logs `info` messages. Change this to a supported log level by setting a flag `log-level`. Supported log levels include `panic, fatal, error, warn, info, debug, trace`:
 ```sh
 cd tile-id-api/
-go build && ./tile-id-api --log-level debug
+go build ./cmd/tile-id-api/ && ./tile-id-api --log-level debug
 ```
 
 ## Docker
