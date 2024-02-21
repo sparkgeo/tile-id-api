@@ -83,7 +83,9 @@ scripts/run-tests-in-container.sh   # validate OpenAPI spec, execute unit tests,
 
 ## Development
 
-Requires Python >= 3.8. To configure the local environment:
+Requires Go 1.21.6 for API development.
+
+Requires Python >= 3.8 for integration test development. To configure the local Python environment:
 ```sh
 scripts/dev-init.sh
 ```
