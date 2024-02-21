@@ -4,7 +4,8 @@ from typing import Dict, Final, List
 
 import requests
 
-request_root: Final[str] = "http://api:8080"
+api_request_root: Final[str] = "http://api:8080"
+wms_request_root: Final[str] = "http://mapproxy:8080"
 tile_paths: Final[Dict[str, List[str]]] = {
     "xyz": [
         "0/0/0",
@@ -34,24 +35,34 @@ tile_paths: Final[Dict[str, List[str]]] = {
 
 
 def wait() -> None:
-    print("...waiting for server")
+    print("...waiting for servers")
     sleep(1)
 
 
+api_ready = False
+wms_ready = False
 while True:
     try:
-        response = requests.get(f"{request_root}/nonexistent")
-        if response.status_code == 404:
-            print("server available")
-            break
-        else:
-            wait()
+        api_response = requests.get(f"{api_request_root}/nonexistent")
+        if api_response.status_code == 404:
+            print("API server available")
+            api_ready = True
+        wms_response = requests.get(wms_request_root)
+        if wms_response.status_code == 200:
+            print("WMS server available")
+            wms_ready = True
     except Exception:
+        pass
+
+    if api_ready and wms_ready:
+        break
+    else:
         wait()
 
-if requests.get(f"{request_root}/openapi.yml").status_code != 200:
+
+if requests.get(f"{api_request_root}/openapi.yml").status_code != 200:
     raise Exception("openapi.yml not found")
-root_response = requests.get(f"{request_root}/", allow_redirects=False)
+root_response = requests.get(f"{api_request_root}/", allow_redirects=False)
 if root_response.status_code < 300 or root_response.status_code >= 400:
     raise Exception("root redirect not found")
 if root_response.headers["location"] != "/docs/":
@@ -82,11 +93,41 @@ for tile_type, paths in tile_paths.items():
                 query_string = f"?opacityPercent={opacity}"
             else:
                 headers["X-Opacity-Percent"] = str(opacity)
-        tile_url = f"{request_root}/{tile_type}/{path}{extension}{query_string}"
+        tile_url = f"{api_request_root}/{tile_type}/{path}{extension}{query_string}"
         print(f"requesting {tile_url} with headers {headers}")
-        response = requests.get(
+        api_response = requests.get(
             tile_url,
             headers=headers,
         )
-        if response.status_code != 200:
-            raise Exception("Unexpected response code", response)
+        if api_response.status_code != 200:
+            raise Exception("Unexpected response code", api_response)
+
+for wms_layer in ["xyz", "tms", "quadkey"]:
+    wms_url = "".join(
+        [
+            wms_request_root,
+            "/wms",
+            "?SERVICE=WMS",
+            "&VERSION=1.3.0",
+            "&REQUEST=GetMap",
+            "&BBOX=-14091244.36530674994,7425609.323962658644,-14090591.39260812104,7426122.497220084071",
+            "&CRS=EPSG:3857",
+            "&WIDTH=1135&HEIGHT=893",
+            "&LAYERS=",
+            wms_layer,
+            "&STYLES=",
+            "&FORMAT=image/png",
+            "&TRANSPARENT=TRUE",
+        ]
+    )
+    print(f"requesting WMS {wms_url}")
+    wms_response = requests.get(wms_url)
+    if wms_response.status_code != 200:
+        raise Exception(
+            f"WMS response unexpected status {wms_response.status_code} for {wms_url}"
+        )
+    response_type = wms_response.headers["Content-Type"]
+    if response_type != "image/png":
+        raise Exception(
+            f"WMS response unexpected content-type {response_type} for {wms_url}"
+        )

@@ -6,6 +6,9 @@ __debug_bin*
 tile-id-api/tile-id-api
 .pre-commit-gofmt.sh
 
+# Mapproxy cache files
+mapproxy/tile_cache
+
 # Env
 .autoenv*.zsh
 

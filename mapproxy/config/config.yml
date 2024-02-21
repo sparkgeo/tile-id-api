@@ -1,0 +1,47 @@
+services:
+  wms:
+    srs: ['EPSG:3857']
+    versions: ['1.3.0']
+    image_formats: ['image/png']
+
+layers:
+  - name: xyz
+    title: xyz
+    sources: [xyz_cache]
+  - name: tms
+    title: tms
+    sources: [tms_cache]
+  - name: quadkey
+    title: quadkey
+    sources: [quadkey_cache]
+
+caches:
+  xyz_cache:
+    sources: [xyz_source]
+    grids: [GLOBAL_WEBMERCATOR]
+    disable_storage: true
+  tms_cache:
+    sources: [tms_source]
+    grids: [GLOBAL_MERCATOR]
+    disable_storage: true
+  quadkey_cache:
+    sources: [quadkey_source]
+    grids: [GLOBAL_WEBMERCATOR]
+    disable_storage: true
+
+sources:
+  xyz_source:
+    type: tile
+    url: http://api:8080/xyz/%(z)s/%(x)s/%(y)s
+    grid: GLOBAL_WEBMERCATOR
+    transparent: true
+  tms_source:
+    type: tile
+    url: http://api:8080/tms/%(tms_path)s
+    grid: GLOBAL_MERCATOR
+    transparent: true
+  quadkey_source:
+    type: tile
+    url: http://api:8080/quadkey/%(quadkey)s
+    grid: GLOBAL_WEBMERCATOR
+    transparent: true

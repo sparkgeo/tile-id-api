@@ -59,6 +59,7 @@ func createHandlerClosure(
 	allIdentifiers []string,
 ) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		logger.Debugf("handling %s", request.URL)
 		encoder, supportsOpacity := tileUtil.GetEncoder(request)
 		var opacity uint8 = 255
 		if supportsOpacity {
