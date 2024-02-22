@@ -1,4 +1,4 @@
-module github.com/captaincoordinates/tile-id-api/tile-id-api
+module github.com/sparkgeo/tile-id-api/tile-id-api
 
 go 1.21.6
 

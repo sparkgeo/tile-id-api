@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/geo"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/params"
 	"github.com/sirupsen/logrus"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/geo"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/handler"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/params"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/quadkey"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/tms"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/zxy"
 	"github.com/gorilla/mux"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/handler/quadkey"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/handler/tms"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/handler/zxy"
 )
 
 func ConfigureRouter(logger logrus.FieldLogger) *mux.Router {

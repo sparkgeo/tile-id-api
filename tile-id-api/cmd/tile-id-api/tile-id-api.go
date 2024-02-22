@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/log"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/log"
 )
 
 func main() {

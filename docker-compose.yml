@@ -1,6 +1,6 @@
 services:
   api:
-    image: captaincoordinates/tile-id-api
+    image: sparkgeo/tile-id-api
     build:
       args:
         LOG_LEVEL: debug

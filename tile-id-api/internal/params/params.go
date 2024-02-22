@@ -8,10 +8,10 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/constants"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/handler"
 )
 
 type IntPathParamsProvider = func(request *http.Request, paramNames ...string) ([]int, error)

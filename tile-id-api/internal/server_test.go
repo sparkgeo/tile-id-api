@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/handler"
 )
 
 func TestStatusCodeFromErrorKnown(t *testing.T) {

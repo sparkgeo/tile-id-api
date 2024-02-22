@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/handler/common"
 	"github.com/sirupsen/logrus"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/constants"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/handler/common"
 )
 
 func TestIdentifier(t *testing.T) {

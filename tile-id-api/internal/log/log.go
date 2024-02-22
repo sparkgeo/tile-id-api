@@ -3,8 +3,8 @@ package log
 import (
 	"fmt"
 
-	"github.com/captaincoordinates/tile-id-api/tile-id-api/internal/constants"
 	"github.com/sirupsen/logrus"
+	"github.com/sparkgeo/tile-id-api/tile-id-api/internal/constants"
 )
 
 func AllLogLevels() []string {
