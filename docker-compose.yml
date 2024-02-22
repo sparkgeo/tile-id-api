@@ -2,6 +2,8 @@ services:
   api:
     image: captaincoordinates/tile-id-api
     build:
+      args:
+        LOG_LEVEL: debug
       dockerfile: dockerfile.api
     ports:
       - ${TILE_ID_LISTEN_PORT:-8123}:8080
@@ -26,3 +28,12 @@ services:
       dockerfile: dockerfile.validateopenapi
     volumes:
       - ./tile-id-api/openapi.yml:/openapi/openapi.yml:ro
+  mapproxy:
+    build:
+      dockerfile: dockerfile.mapproxy
+    ports:
+      - ${MAPPROXY_LISTEN_PORT:-8124}:8080
+    volumes:
+      - ./mapproxy/config:/mapproxy/config:ro
+    depends_on:
+      - api

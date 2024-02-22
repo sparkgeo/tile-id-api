@@ -1,0 +1,15 @@
+FROM python:3.7-slim-buster
+
+RUN pip install MapProxy==1.16.0 pyproj
+
+RUN groupadd -g 1337 mapproxy \
+    && useradd --shell /bin/bash --gid 1337 -m mapproxy \
+    && usermod -a -G sudo mapproxy
+
+EXPOSE 8080
+
+COPY mapproxy/config /mapproxy/config
+
+USER mapproxy
+
+CMD [ "mapproxy-util" , "serve-develop", "--bind", "0.0.0.0:8080", "--debug", "/mapproxy/config/config.yml" ]

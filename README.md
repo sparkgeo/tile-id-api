@@ -60,7 +60,7 @@ go build ./cmd/tile-id-api/ && ./tile-id-api --log-level debug
 
 The API can be run in a container and by default the container will bind to local port `8123`. This can be changed by setting an environment variable `TILE_ID_LISTEN_PORT` to a suitable port:
 ```sh
-TILE_ID_LISTEN_PORT=8999 scripts/run-in-container.sh
+TILE_ID_LISTEN_PORT=9123 scripts/run-in-container.sh
 ```
 
 ## Tests
@@ -80,6 +80,15 @@ scripts/run-integration-tests-in-container.sh # execute all integration tests
 # this script is executed in CI
 scripts/run-tests-in-container.sh   # validate OpenAPI spec, execute unit tests, execute integration tests
 ```
+
+## MapProxy
+
+A MapProxy configuration is provided to test each of the available tiling schemes as a tile source. This happens as part of integration testing, but if necessary MapProxy can be run in a container. By default MapProxy will bind to local port `8124`. This can be changed by setting an environment variable `MAPPROXY_LISTEN_PORT` to a suitable port: 
+```sh
+MAPPROXY_LISTEN_PORT=9124 scripts/run-mapproxy-in-container.sh
+```
+
+Use `http://localhost:8124/wms?request=GetCapabilities` to access MapProxy's WMS GetCapabilities document. This MapProxy configuration is for testing purposes only, and is not suitable for a production environment.
 
 ## Development
 
