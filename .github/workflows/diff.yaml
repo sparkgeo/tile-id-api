@@ -34,4 +34,5 @@ jobs:
         name: CDK synth
         env:
           CDK_DEFAULT_ACCOUNT: ${{ steps.aws-sts.outputs.acct_id }}
+          CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
         run: cd iac/ && node_modules/aws-cdk/bin/cdk diff
