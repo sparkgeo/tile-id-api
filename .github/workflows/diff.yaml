@@ -20,10 +20,6 @@ jobs:
         with:
           role-to-assume: ${{vars.GHA_AWS_DEPLOY_ROLE}}
           aws-region: eu-west-2
-      -
-        name: Get AWS Account Id
-        id: aws-sts
-        run: echo "acct_id=$(aws sts get-caller-identity --query 'Account')" >> $GITHUB_OUTPUT
       - 
         name: Checkout repo
         uses: actions/checkout@v2
@@ -33,6 +29,6 @@ jobs:
       - 
         name: CDK synth
         env:
-          CDK_DEFAULT_ACCOUNT: ${{ steps.aws-sts.outputs.acct_id }}
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEPLOY_ACCOUNT }}
           CDK_DEFAULT_REGION: ${{ env.AWS_REGION }}
         run: cd iac/ && node_modules/aws-cdk/bin/cdk diff
