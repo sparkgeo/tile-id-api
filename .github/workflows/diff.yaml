@@ -28,4 +28,4 @@ jobs:
         run: cd iac/ && npm install
       - 
         name: CDK synth
-        run: cd iac/ && cdk diff
+        run: cd iac/ && node_modules/aws-cdk/bin/cdk diff
