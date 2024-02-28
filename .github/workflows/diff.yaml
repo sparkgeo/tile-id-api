@@ -19,7 +19,7 @@ jobs:
         name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${var.GHA_AWS_DEPLOY_ROLE}
+          role-to-assume: ${{vars.GHA_AWS_DEPLOY_ROLE}}
           aws-region: eu-west-1
       - 
         name: Checkout repo
