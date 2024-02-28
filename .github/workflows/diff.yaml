@@ -1,0 +1,32 @@
+name: IaC Diff
+
+on:
+  push:
+    branches:
+      - '*'
+
+
+jobs:
+  deploy:
+    name: Deploy CDK stacks to test
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    steps:
+      - 
+        name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${var.GHA_AWS_DEPLOY_ROLE}
+          aws-region: eu-west-1
+      - 
+        name: Checkout repo
+        uses: actions/checkout@v2
+      - 
+        name: Install dependencies
+        run: cd iac/ && npm install
+      - 
+        name: CDK synth
+        run: cd iac/ && cdk diff
