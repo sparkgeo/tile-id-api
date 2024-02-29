@@ -31,4 +31,4 @@ jobs:
         env:
           AWS_ACCOUNT: ${{ secrets.CDK_DEPLOY_ACCOUNT }}
           AWS_REGION: ${{ env.AWS_REGION }}
-        run: cd iac/ && node_modules/aws-cdk/bin/cdk diff
+        run: export PATH=node_modules/aws-cdk/bin:$PATH && bash ./scripts/deploy.sh DIFF

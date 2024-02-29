@@ -22,7 +22,14 @@ if [ -z "$AWS_ACCOUNT" ]; then
     exit 1
 fi
 
-cdk deploy \
+if [ $1 = "DIFF" ]
+then 
+    CMD="diff"
+else
+    CMD="deploy"
+fi
+
+cdk $CMD \
     -c aws_region=$AWS_REGION \
     -c aws_account=$AWS_ACCOUNT \
     --require-approval never
