@@ -27,7 +27,7 @@ jobs:
         name: Install dependencies
         run: cd iac/ && npm install
       - 
-        name: CDK synth
+        name: CDK Diff
         env:
           CDK_DEPLOY_ACCOUNT: ${{ secrets.CDK_DEPLOY_ACCOUNT }}
           CDK_DEPLOY_REGION: ${{ env.AWS_REGION }}
