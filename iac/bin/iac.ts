@@ -9,7 +9,7 @@ new IacStack(app, IacStack.stack_name, {
   env: {
     // region: app.node.tryGetContext("aws_region"),
     // account: app.node.tryGetContext("aws_account"),
-    account: process.env.CDK_DEFAULT_ACCOUNT, 
-    region: process.env.CDK_DEFAULT_REGION 
+    account: process.env.CDK_DEPLOY_ACCOUNT, 
+    region: process.env.CDK_DEPLOY_REGION 
   }
 });
