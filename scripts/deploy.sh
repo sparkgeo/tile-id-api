@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# =====
-# Should only be deployed from local environment from main branch.
-# Main branch GitHub Actions must have completed successfully first.
-# Best practice would be to deploy from CICD, e.g. via GitHub Actions,
-# but as this is a personal repo it does not have access to Sparkgeo's
-# organizational secrets for AWS access.
-# Login locally via AWS SSO before executing this script.
-# =====
-
 set -e
 
 pushd $(dirname $0)/../iac
@@ -26,10 +17,9 @@ if [ $1 = "DIFF" ]
 then 
     CMD="diff"
 else
-    CMD="deploy"
+    CMD="deploy --require-approval never"
 fi
 
 cdk $CMD \
     -c aws_region=$AWS_REGION \
-    -c aws_account=$AWS_ACCOUNT \
-    --require-approval never
+    -c aws_account=$AWS_ACCOUNT
