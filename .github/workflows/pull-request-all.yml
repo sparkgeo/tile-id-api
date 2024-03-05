@@ -1,0 +1,38 @@
+name: Pull Request, Any Branch
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    name: Validate and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test
+        run: scripts/run-tests-in-container.sh
+  deploy_diff:
+    needs: ["test"]
+    name: Diff IaC changes
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      id-token: write
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{vars.GHA_AWS_DEPLOY_ROLE}}
+          aws-region: us-west-2
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: cd iac/ && npm install
+      - name: CDK Diff
+        env:
+          AWS_ACCOUNT: ${{ secrets.CDK_DEPLOY_ACCOUNT }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+        run: export PATH=node_modules/aws-cdk/bin:$PATH && bash ./scripts/deploy.sh DIFF
