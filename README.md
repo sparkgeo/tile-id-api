@@ -1,6 +1,6 @@
 # Tile ID API
 
-[![Validate and Test](https://github.com/sparkgeo/tile-id-api/actions/workflows/test.yml/badge.svg)](https://github.com/sparkgeo/tile-id-api/actions/workflows/test.yml)
+[![Tests](https://github.com/sparkgeo/tile-id-api/actions/workflows/push-main.yml/badge.svg)](https://github.com/sparkgeo/tile-id-api/actions/workflows/push-main.yml)
 
 Simple HTTP API to support map tile identification across a number of tiling schemes, written in Go.
 
