@@ -3,7 +3,8 @@ package handler
 import "slices"
 
 func SortIdentifiers(allIdentifiers []string, firstValue string) []string {
-	ownAllIdentifiers := allIdentifiers[:]
+	ownAllIdentifiers := make([]string, len(allIdentifiers))
+	copy(ownAllIdentifiers, allIdentifiers)
 	slices.Sort(ownAllIdentifiers)
 	split := -1
 	for i, identifier := range ownAllIdentifiers {
